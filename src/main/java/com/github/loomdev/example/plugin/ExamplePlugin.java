@@ -1,8 +1,16 @@
 package com.github.loomdev.example.plugin;
 
+import com.google.inject.internal.asm.$ByteVector;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.TextColor;
 import org.apache.logging.log4j.Logger;
+import org.loomdev.api.entity.Entity;
+import org.loomdev.api.entity.decoration.ArmorStand;
+import org.loomdev.api.entity.player.Player;
 import org.loomdev.api.event.Subscribe;
 import org.loomdev.api.event.block.BlockBrokenEvent;
+import org.loomdev.api.event.block.entity.ArmorStandPlacedEvent;
+import org.loomdev.api.event.player.connection.PlayerJoinedEvent;
 import org.loomdev.api.plugin.LoomPlugin;
 import org.loomdev.api.plugin.Plugin;
 import org.loomdev.api.plugin.PluginManager;
@@ -51,8 +59,31 @@ public class ExamplePlugin implements Plugin {
     }
 
     @Subscribe
-    public void onBlockBroken(BlockBrokenEvent event) {
-        logger.info("A block was broken default canceled: " + event.isCancelled());
-        event.setCancelled(true);
+    public void onArmorStandPlaced(ArmorStandPlacedEvent event) {
+        event.getPlayer().sendMessage(TextComponent.of("You placed and armor stand!").color(TextColor.fromHexString("#efefef")));
+
+        ArmorStand armorStand = event.getArmorStand();
+        armorStand.setArmsVisible(true);
+        armorStand.setRightArmPose(ArmorStand.DEFAULT_RIGHT_ARM_ROTATION.add(-120, 0, 0));
+    }
+
+    @Subscribe
+    public void onPlayerJoined(PlayerJoinedEvent event) {
+        event.setJoinMessage(
+                TextComponent.of("[")
+                        .color(TextColor.fromHexString("#404040"))
+                        .append(
+                                TextComponent.of("+")
+                                        .color(TextColor.fromHexString("#20d6a6"))
+                        )
+                        .append(
+                                TextComponent.of("] ")
+                                        .color(TextColor.fromHexString("#404040"))
+                        )
+                        .append(
+                                event.getPlayer().getDisplayName()
+                                        .color(TextColor.fromHexString("#FFDF00"))
+                        )
+        );
     }
 }
