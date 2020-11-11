@@ -1,36 +1,37 @@
 package com.github.loomdev.example.plugin;
 
-import com.github.loomdev.example.plugin.command.TestPlugin;
-import com.github.loomdev.example.plugin.task.CosmeticsTask;
-import com.github.loomdev.example.plugin.task.TablistTask;
+import com.github.loomdev.example.plugin.command.ExampleCommand;
+import com.github.loomdev.example.plugin.task.TabListTask;
 import com.google.inject.Inject;
-import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.apache.logging.log4j.Logger;
 import org.loomdev.api.ApiVersion;
 import org.loomdev.api.config.Configuration;
-import org.loomdev.api.entity.decoration.ArmorStand;
 import org.loomdev.api.event.Subscribe;
-import org.loomdev.api.event.entity.decoration.ArmorStandPlacedEvent;
-import org.loomdev.api.event.player.PlayerMessagedEvent;
-import org.loomdev.api.event.player.connection.PlayerJoinedEvent;
-import org.loomdev.api.event.server.ServerPingedEvent;
-import org.loomdev.api.plugin.Plugin;
+import org.loomdev.api.event.player.connection.PlayerJoinEvent;
+import org.loomdev.api.event.server.ServerPingEvent;
 import org.loomdev.api.plugin.annotation.Config;
 import org.loomdev.api.plugin.annotation.LoomPlugin;
+import org.loomdev.api.plugin.hooks.Hook;
+import org.loomdev.api.plugin.hooks.PluginDisableHook;
+import org.loomdev.api.plugin.hooks.PluginEnableHook;
+import org.loomdev.api.scheduler.ScheduledTask;
 import org.loomdev.api.server.Server;
 import org.loomdev.api.util.ChatColor;
 
+import java.util.concurrent.TimeUnit;
+
 @LoomPlugin(
-        id = "loom-demo",
-        name = "Demo",
-        description = "A Loom API demo plugin.",
-        version = "1.0-SNAPSHOT",
-        authors = "Loom contributors",
-        minimumApiVersion = ApiVersion.UNKNOWN
+    id = "loom-demo",
+    name = "Demo",
+    description = "A Loom API demo plugin.",
+    version = "1.0-SNAPSHOT",
+    authors = "Loom contributors",
+    minimumApiVersion = ApiVersion.UNKNOWN
 )
-public class DemoPlugin implements Plugin {
+public class DemoPlugin {
 
     public static DemoPlugin instance;
 
@@ -44,57 +45,49 @@ public class DemoPlugin implements Plugin {
     @Config(copyDefault = true, path = "config.yml")
     public Configuration config;
 
+    private ScheduledTask tabListTask;
+
     @Inject
-    public DemoPlugin(Logger logger) {
+    public DemoPlugin() {
         instance = this;
     }
 
-    @Override
-    public void onPluginEnable() {
-        server.getCommandManager().register(this, new TestPlugin());
-        server.getScheduler().createTask().intervalTicks(20).execute(new CosmeticsTask()).complete(this);
-        server.getScheduler().createTask().intervalTicks(1).execute(new TablistTask()).complete(this);
+    @Hook
+    public void onEnable(PluginEnableHook hook) {
+        logger.info("Hey Hey, enabling the plugin.");
+
+        // Register command
+        server.getCommandManager().register(this, new ExampleCommand());
+
+        // Start scheduled tasks
+        tabListTask = ScheduledTask.builder()
+                .interval(1)
+                .execute(new TabListTask())
+                .complete(this);
+
+        logger.info("Scheduled task");
     }
 
-    @Override
-    public void onPluginDisable() {
+    @Hook
+    public void onDisable(PluginDisableHook hook) {
+        tabListTask.cancelTask(true);
+
         logger.info("Bye, disabling the plugin.");
     }
 
     @Subscribe
-    public void onJoin(PlayerJoinedEvent event) {
-        event.getPlayer().sendMessage(TextComponent.of(ChatColor.translate('&', config.getString("messages.join", ""))));
+    public void onJoin(PlayerJoinEvent event) {
+        event.getPlayer().sendMessage(Component.text(ChatColor.translate('&', config.getString("messages.join"))));
     }
 
     @Subscribe
-    public void onChat(PlayerMessagedEvent event) {
-        event.setPrefix(TextComponent.builder()
-                .append(event.getPlayer().getDisplayName())
-                .append(TextComponent.of(": ").color(TextColor.fromHexString("#AAAAAA")))
-                .build()
-        );
-        event.setMessage(event.getMessage().orElse(TextComponent.empty()).color(TextColor.fromHexString("#94d1ff")));
-    }
-
-    @Subscribe
-    public void onArmorStandPlaced(ArmorStandPlacedEvent event) {
-        event.getPlayer().ifPresent(player -> {
-            player.sendMessage(TextComponent.of("You placed an armor stand!").color(TextColor.fromHexString("#efefef")));
-        });
-
-        ArmorStand armorStand = (ArmorStand) event.getEntity();
-        armorStand.setArmsVisible(true);
-        armorStand.setRightArmPose(ArmorStand.DEFAULT_RIGHT_ARM_ROTATION.add(-120, 0, 0));
-    }
-
-    @Subscribe
-    public void onServerPinged(ServerPingedEvent event) {
-        TextComponent motd = TextComponent.builder()
-                .append(TextComponent.of("Loom")
+    public void onServerPinged(ServerPingEvent event) {
+        Component motd = Component.text()
+                .append(Component.text("Loom")
                         .color(TextColor.fromHexString("#ffc130"))
                         .decoration(TextDecoration.BOLD, true))
-                .append(TextComponent.newline())
-                .append(TextComponent.of("Loom Demo Server!"))
+                .append(Component.newline())
+                .append(Component.text("Loom Demo Server!"))
                 .build();
 
         event.setMotd(motd);
