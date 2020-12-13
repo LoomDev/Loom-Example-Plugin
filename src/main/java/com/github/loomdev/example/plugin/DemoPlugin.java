@@ -1,6 +1,7 @@
 package com.github.loomdev.example.plugin;
 
 import com.github.loomdev.example.plugin.command.ExampleCommand;
+import com.github.loomdev.example.plugin.listener.SculkListener;
 import com.github.loomdev.example.plugin.task.TabListTask;
 import com.google.inject.Inject;
 import net.kyori.adventure.text.Component;
@@ -10,8 +11,8 @@ import org.apache.logging.log4j.Logger;
 import org.loomdev.api.ApiVersion;
 import org.loomdev.api.config.Configuration;
 import org.loomdev.api.event.Subscribe;
-import org.loomdev.api.event.player.connection.PlayerJoinEvent;
-import org.loomdev.api.event.server.ServerPingEvent;
+import org.loomdev.api.event.connection.ConnectionEvent;
+import org.loomdev.api.event.connection.StatusPingEvent;
 import org.loomdev.api.plugin.annotation.Config;
 import org.loomdev.api.plugin.annotation.LoomPlugin;
 import org.loomdev.api.plugin.hooks.Hook;
@@ -21,15 +22,13 @@ import org.loomdev.api.scheduler.ScheduledTask;
 import org.loomdev.api.server.Server;
 import org.loomdev.api.util.ChatColor;
 
-import java.util.concurrent.TimeUnit;
-
 @LoomPlugin(
     id = "loom-demo",
     name = "Demo",
     description = "A Loom API demo plugin.",
     version = "1.0-SNAPSHOT",
     authors = "Loom contributors",
-    minimumApiVersion = ApiVersion.UNKNOWN
+    minimumApiVersion = ApiVersion.v20w49A
 )
 public class DemoPlugin {
 
@@ -59,6 +58,9 @@ public class DemoPlugin {
         // Register command
         server.getCommandManager().register(this, new ExampleCommand());
 
+        // Register listener class
+        server.getEventManager().register(this, new SculkListener());
+
         // Start scheduled tasks
         tabListTask = ScheduledTask.builder()
                 .interval(1)
@@ -76,12 +78,12 @@ public class DemoPlugin {
     }
 
     @Subscribe
-    public void onJoin(PlayerJoinEvent event) {
+    public void onJoin(ConnectionEvent.Join event) {
         event.getPlayer().sendMessage(Component.text(ChatColor.translate('&', config.getString("messages.join"))));
     }
 
     @Subscribe
-    public void onServerPinged(ServerPingEvent event) {
+    public void onServerPinged(StatusPingEvent event) {
         Component motd = Component.text()
                 .append(Component.text("Loom")
                         .color(TextColor.fromHexString("#ffc130"))

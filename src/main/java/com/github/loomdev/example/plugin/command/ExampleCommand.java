@@ -2,6 +2,7 @@ package com.github.loomdev.example.plugin.command;
 
 import org.jetbrains.annotations.NotNull;
 import org.loomdev.api.command.Command;
+import org.loomdev.api.command.CommandContext;
 import org.loomdev.api.command.CommandSource;
 
 public class ExampleCommand extends Command {
@@ -14,7 +15,11 @@ public class ExampleCommand extends Command {
     }
 
     @Override
-    public void execute(@NotNull CommandSource commandSource, String[] strings) {
-        commandSource.sendMessage("You used the Example command... Good job!");
+    public void execute(@NotNull CommandContext context) {
+        if (context.getAlias().equals("example-alias")) {
+            context.getSource().sendMessage("You used an alias for this command- stellar!");
+        } else {
+            context.getSource().sendMessage("You used the Example command... Good job!");
+        }
     }
 }
