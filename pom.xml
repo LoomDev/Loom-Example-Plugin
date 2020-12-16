@@ -18,7 +18,7 @@
         <dependency>
             <groupId>org.loomdev</groupId>
             <artifactId>loom-api</artifactId>
-            <version>20w49a</version>
+            <version>20w51a</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

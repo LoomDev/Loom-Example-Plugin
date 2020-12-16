@@ -1,6 +1,7 @@
 package com.github.loomdev.example.plugin;
 
 import com.github.loomdev.example.plugin.command.ExampleCommand;
+import com.github.loomdev.example.plugin.command.WhoAmICommand;
 import com.github.loomdev.example.plugin.listener.SculkListener;
 import com.github.loomdev.example.plugin.task.TabListTask;
 import com.google.inject.Inject;
@@ -28,7 +29,7 @@ import org.loomdev.api.util.ChatColor;
     description = "A Loom API demo plugin.",
     version = "1.0-SNAPSHOT",
     authors = "Loom contributors",
-    minimumApiVersion = ApiVersion.v20w49A
+    minimumApiVersion = ApiVersion.v20w51A
 )
 public class DemoPlugin {
 
@@ -57,6 +58,7 @@ public class DemoPlugin {
 
         // Register command
         server.getCommandManager().register(this, new ExampleCommand());
+        server.getCommandManager().register(this, new WhoAmICommand());
 
         // Register listener class
         server.getEventManager().register(this, new SculkListener());
