@@ -13,6 +13,6 @@ public class SculkListener {
     public void onActivate(SculkSensorEvent.Activate event) {
         var type = event.getVibrationType().name().replace("_", " ").toLowerCase();
         var component = Component.text("shh.. i sensed the vibration of " + type).color(TextColor.color(173, 190, 219));
-        Loom.getServer().broadcastMessage(component);
+        Loom.getPlayerManager().broadcastMessage(component);
     }
 }
