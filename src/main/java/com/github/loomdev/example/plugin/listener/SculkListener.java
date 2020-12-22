@@ -11,8 +11,8 @@ public class SculkListener {
 
     @Subscribe(ignoreCancelled = true, order = EventOrder.EARLIEST)
     public void onActivate(SculkSensorEvent.Activate event) {
-        var type = event.getVibrationType().name().replace("_", " ").toLowerCase();
+        var type = event.getVibrationType().getKey();
         var component = Component.text("shh.. i sensed the vibration of " + type).color(TextColor.color(173, 190, 219));
-        Loom.getServer().broadcastMessage(component);
+        Loom.getServer().getPlayerManager().broadcastMessage(component);
     }
 }

@@ -39,7 +39,7 @@ public class TabListTask extends ScheduledTaskRunnable {
                 .append(Component.text("with a modern and extensive plugin API.")).append(Component.newline())
                 .append(Component.text("loomdev.org").color(TextColor.fromHexString("#ffd6ab"))).append(Component.newline());
 
-        Loom.getServer().getOnlinePlayers().forEach(player -> {
+        Loom.getServer().getPlayerManager().getOnlinePlayers().forEach(player -> {
             player.setTabListHeader(header);
             player.setTabListFooter(footer);
         });
