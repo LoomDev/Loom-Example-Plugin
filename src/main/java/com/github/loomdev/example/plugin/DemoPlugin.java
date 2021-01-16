@@ -1,5 +1,6 @@
 package com.github.loomdev.example.plugin;
 
+import com.github.loomdev.example.plugin.command.DimensionalTeleportCommand;
 import com.github.loomdev.example.plugin.command.ExampleCommand;
 import com.github.loomdev.example.plugin.command.WhoAmICommand;
 import com.github.loomdev.example.plugin.listener.SculkListener;
@@ -12,8 +13,8 @@ import org.apache.logging.log4j.Logger;
 import org.loomdev.api.ApiVersion;
 import org.loomdev.api.config.Configuration;
 import org.loomdev.api.event.Subscribe;
-import org.loomdev.api.event.connection.ConnectionEvent;
-import org.loomdev.api.event.connection.StatusPingEvent;
+import org.loomdev.api.event.entity.PlayerEvent;
+import org.loomdev.api.event.server.connection.StatusPingEvent;
 import org.loomdev.api.plugin.annotation.Config;
 import org.loomdev.api.plugin.annotation.LoomPlugin;
 import org.loomdev.api.plugin.hooks.Hook;
@@ -59,6 +60,7 @@ public class DemoPlugin {
         // Register command
         server.getCommandManager().register(this, new ExampleCommand());
         server.getCommandManager().register(this, new WhoAmICommand());
+        server.getCommandManager().register(this, new DimensionalTeleportCommand());
 
         // Register listener class
         server.getEventManager().register(this, new SculkListener());
@@ -80,7 +82,7 @@ public class DemoPlugin {
     }
 
     @Subscribe
-    public void onJoin(ConnectionEvent.Join event) {
+    public void onJoin(PlayerEvent.Join event) {
         event.getPlayer().sendMessage(Component.text(ChatColor.translate('&', config.getString("messages.join"))));
     }
 

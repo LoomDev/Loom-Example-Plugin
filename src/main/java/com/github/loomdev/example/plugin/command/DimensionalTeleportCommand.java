@@ -5,7 +5,8 @@ import org.jetbrains.annotations.NotNull;
 import org.loomdev.api.Loom;
 import org.loomdev.api.command.Command;
 import org.loomdev.api.command.CommandContext;
-import org.loomdev.api.entity.player.Player;
+import org.loomdev.api.sound.Sound;
+import org.loomdev.api.sound.SoundEvent;
 import org.loomdev.api.util.ChatColor;
 import org.loomdev.api.util.NamespacedKey;
 
@@ -21,17 +22,21 @@ public class DimensionalTeleportCommand extends Command {
 
     @Override
     public void execute(@NotNull CommandContext context) {
-        var arguments = context.getArguments();
+        context.getSource().ifPlayer(player -> {
+            var arguments = context.getArguments();
 
-        /*if (arguments.length < 1) {
-            context.getSource().sendMessage(Component.text("Specify a dimension.").color(ChatColor.RED));
-            return;
-        }*/
+            if (arguments.length < 1) {
+                context.getSource().sendMessage(Component.text("Specify a dimension.", ChatColor.RED));
+                return;
+            }
 
-        var level = Loom.getServer().getWorldManager().getWorld(NamespacedKey.of("minecraft:the_end"));
-        level.ifPresent(dimension -> {
-            ((Player) context.getSource()).teleport(dimension.getBlock(0, 90, 0).getLocation());
-            context.getSource().sendMessage("Teleported!");
+            Loom.getServer().getWorldManager().getWorld(NamespacedKey.of(arguments[0])).ifPresent(dimension -> {
+                player.teleport(dimension.getBlock(0, 90, 0).getLocation());
+                player.sendMessage("Teleported!");
+                player.playSound(Sound.builder(SoundEvent.BLOCK_ENDER_CHEST_OPEN).build());
+            });
+        }).orElse(source -> {
+            source.sendMessage(Component.text("This command is only usable by players.", ChatColor.RED));
         });
     }
 
