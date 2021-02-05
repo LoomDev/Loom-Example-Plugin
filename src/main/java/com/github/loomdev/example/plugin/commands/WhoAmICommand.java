@@ -1,4 +1,4 @@
-package com.github.loomdev.example.plugin.command;
+package com.github.loomdev.example.plugin.commands;
 
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
