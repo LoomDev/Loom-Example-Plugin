@@ -1,6 +1,8 @@
 package com.github.loomdev.example.plugin;
 
 import com.github.loomdev.example.plugin.commands.PingCommand;
+import com.github.loomdev.example.plugin.commands.PlayerWeatherCommand;
+import com.github.loomdev.example.plugin.commands.WeatherCommand;
 import com.github.loomdev.example.plugin.commands.WhoAmICommand;
 import com.github.loomdev.example.plugin.listeners.PlayerChatListener;
 import com.github.loomdev.example.plugin.listeners.PlayerJoinListener;
@@ -36,6 +38,8 @@ public class ExamplePlugin {
         var commandManager = server.getCommandManager();
         commandManager.registerCommand(new PingCommand());
         commandManager.registerCommand(new WhoAmICommand());
+        commandManager.registerCommand(new WeatherCommand());
+        commandManager.registerCommand(new PlayerWeatherCommand());
 
         var eventManager = server.getEventManager();
         eventManager.registerListener(new PlayerChatListener());
@@ -44,7 +48,7 @@ public class ExamplePlugin {
 
     @LifecycleHook
     public void onDisable(LifecycleEvent.Disable event) {
-
+        logger.info("Bye bye :wave:");
     }
 
 }
