@@ -1,4 +1,4 @@
-package com.github.loomdev.example.plugin.commands;
+package org.loomdev.example.command;
 
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
@@ -13,14 +13,12 @@ public class WhoAmICommand extends Command {
 
     @Override
     public void execute(@NotNull CommandContext context) {
-        var source = context.getSource();
-
-        source.ifPlayer(player -> {
+        context.getSource().ifPlayer(player -> {
             player.sendMessage(Component.text("You're a player!"));
         }).ifConsole(console -> {
             console.sendMessage(Component.text("You're the console!"));
         }).orElse(other -> {
-            other.sendMessage(Component.text("You're neither the player nor the console!"));
+            other.sendMessage(Component.text("You're neither a player nor the console!"));
         });
     }
 }

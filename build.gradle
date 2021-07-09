@@ -1,0 +1,16 @@
+plugins {
+    id 'java'
+}
+
+group 'org.loomdev'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    compileOnly 'org.loomdev:loom-api:1.17.1'
+    annotationProcessor 'org.loomdev:loom-api:1.17.1'
+}

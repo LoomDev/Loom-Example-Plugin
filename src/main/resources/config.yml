@@ -1,2 +1,2 @@
 messages:
-  join: "&6Welcome to the Loom Demo server! Feel free to take a look around."
+  join: '{"text":"Welcome to the Loom demo server!","color":"#d1fffe"}'
