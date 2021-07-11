@@ -8,6 +8,7 @@ import org.loomdev.api.plugin.Plugin;
 import org.loomdev.api.plugin.lifecycle.LifecycleEvent;
 import org.loomdev.api.plugin.lifecycle.LifecycleHook;
 import org.loomdev.api.server.Server;
+import org.loomdev.example.command.NameItemCommand;
 import org.loomdev.example.command.PingCommand;
 import org.loomdev.example.command.WhoAmICommand;
 import org.loomdev.example.command.weather.PlayerWeatherCommand;
@@ -38,6 +39,7 @@ public class LoomExample {
         logger.info("Enabling under Loom {} ({}).", apiVersion.getName(), apiVersion.getReleaseType());
 
         var commandManager = server.getCommandManager();
+        commandManager.registerCommand(new NameItemCommand());
         commandManager.registerCommand(new PingCommand());
         commandManager.registerCommand(new PlayerWeatherCommand());
         commandManager.registerCommand(new WhoAmICommand());
