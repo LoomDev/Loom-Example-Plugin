@@ -19,7 +19,7 @@ import org.loomdev.example.listener.ConnectionListener;
         name = "Loom Example",
         description = "A basic Loom API example plugin.",
         version = "1.0-SNAPSHOT",
-        authors = "THe Loom development team"
+        authors = "The Loom development team"
 )
 public class LoomExample {
 
